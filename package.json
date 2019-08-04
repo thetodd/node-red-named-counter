@@ -1,0 +1,21 @@
+{
+  "name": "node-red-contrib-named-counter",
+  "version": "1.0.0",
+  "description": "A counter node with multiple named counters for node red",
+  "author": {
+    "name" : "Florian Schleich",
+    "email" : "florain@dailycoding.de",
+    "url" : "https://www.dailycoding.de/"
+  },
+  "keywords": [ "node-red" ],
+  "license" : "gpl-3.0",
+  "node-red" : {
+        "nodes": {
+            "counter": "counter.js"
+        }
+  },
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/thetodd/node-red-named-counter.git"
+  }
+}

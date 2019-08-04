@@ -1,0 +1,106 @@
+<script type="text/javascript">
+    RED.nodes.registerType('named-counter',{
+        category: 'function',
+        color: '#7ab9e9',
+        defaults: {
+            name: {value:""},
+            tokens: {value: "{\"name\": {\"maxValue\": 5}}"}
+        },
+        inputs:1,
+        outputs:3,
+        icon: "hash.png",
+        label: function() {
+            return this.name || "named-counter";
+        },
+        oneditprepare: function() {
+            var that = this;
+            this.editor = RED.editor.createEditor({
+                id: 'node-input-tokens-editor',
+                mode: 'ace/mode/html',
+                value: $("#node-input-tokens").val()
+            });
+            RED.library.create({
+                url:"functions", // where to get the data from
+                type:"function", // the type of object the library is for
+                editor:that.editor, // the field name the main text body goes to
+                fields:['name','outputs']
+            });
+            this.editor.focus();
+        },
+        oneditsave: function() {
+            $("#node-input-tokens").val(this.editor.getValue());
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditcancel: function() {
+            this.editor.destroy();
+            delete this.editor;
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-text-editor-row)");
+            var height = $("#dialog-form").height();
+            for (var i=0; i<rows.size(); i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-text-editor-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $(".node-text-editor").css("height",height+"px");
+            this.editor.resize();
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="named-counter">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+<div class="form-row" style="position: relative; margin-bottom: 0px;">
+        <label for="node-input-template"><i class="fa fa-file-code-o"></i> Counters:</label>
+        <input type="hidden" id="node-input-tokens" autofocus="autofocus">
+    </div>
+    <div class="form-row node-text-editor-row">
+        <div style="height: 250px; min-height:150px;" class="node-text-editor" id="node-input-tokens-editor" ></div>
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="named-counter">
+    <p>Increments a counter on every message using the name in the payload and appends the counter object to the message.</p>
+<h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>payload
+            <span class="property-type">string</span>
+        </dt>
+        <dd> the name of the counter to increment. </dd>
+        <dt class="optional">reset
+            <span class="property-type">boolean</span>
+        </dt>
+        <dd>Resets the counter with the name in payload, or resets all counters if payload is empty.</dd>
+    </dl>
+
+<h3>Outputs</h3>
+     <ol class="node-ports">
+         <li>Standard output
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">string</span></dt>
+                 <dd>payload of the original message</dd>
+                 <dt>counter <span class="property-type">string</span></dt>
+                 <dd>the counter object from the properties with the current counter value.</dd>
+             </dl>
+         </li>
+         <li>Counter value max error
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">string</span></dt>
+                 <dd>the payload from the original message.</dd>
+             </dl>
+         </li>
+         <li>Counter not found error
+             <dl class="message-properties">
+                 <dt>payload <span class="property-type">string</span></dt>
+                 <dd>the payload from the original message.</dd>
+             </dl>
+         </li>
+     </ol>
+
+</script>
+
